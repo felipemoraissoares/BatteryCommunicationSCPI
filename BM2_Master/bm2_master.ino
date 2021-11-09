@@ -6,15 +6,18 @@
 #define I2C_BAUDRATE                  400000 //400 kHz 
 #define PATH_BUF_SIZE                 40
 #define I2C_RW_DELAY                  100    //100 ms
+#define HDR_LEN                       5
 static char CwdBuf[PATH_BUF_SIZE] = "/";
 static char TmpBuf[PATH_BUF_SIZE];
 uint8_t cmd_tx[3] = {};
 uint8_t rx_data[4];
 uint8_t rx_tle[2];
 uint8_t tm_data[15];
-
+char tm_cmd[20];
 // prototypes
 int cmd_tm(int argc, char *argv[]);
+int cmd_reset(int argc, char *argv[]);
+int cmd_pf(int argc, char *argv[]);
 void readTM(int cmd);
 void sendCMD(char* CMD);
 
@@ -31,6 +34,8 @@ CMD_TABLE_MEM StCmdLineEntry CmdTable[] =
   { "h",       Cmd_help,    "     : alias for help" },
   { "?",       Cmd_help,    "     : alias for help" },
   { "tm",      cmd_tm,      "   : Send BM2 Telemetry"},
+  { "reset",      cmd_reset,      "   : Send BM2 Reset"},
+  { "pf",      cmd_pf,      "   : Send BM2 Assert/Clear PF"},
   {  0, 0, 0 }
 };
 
@@ -80,11 +85,65 @@ void loop()
   // @@ Call other tasks here (not blocking obviously)
 }
 
+int cmd_pf(int argc, char *argv[])
+{
+  if (argc != 2)
+  {
+    Serial.print(F("Please send 1 args for this option! \r\n"));
+    Serial.println(F("Available commands are : pf on/off"));
+    return (0);
+  }
+  else
+  {
+    Serial.println(argv[1]);
+    Serial.println(strcmp(argv[1], "on"));
+
+    if (strcmp(argv[1], "on") == 0)
+    {
+      sprintf(tm_cmd, "%s <ON>", BM_PFIN);
+      Serial.print("Command to send = ");
+      Serial.println(tm_cmd);
+      sendCMD(tm_cmd);
+    }
+    else if (strcmp(argv[1], "off") == 0)
+    {
+      sprintf(tm_cmd, "%s <OFF>", BM_PFIN);
+      Serial.print("Command to send = ");
+      Serial.println(tm_cmd);
+      sendCMD(tm_cmd);
+    }
+    else
+    {
+      Serial.println("Wrong param");
+      Serial.println(F("Available commands are : pf on/off"));
+      return (0);
+    }
+  }
+}
+
+int cmd_reset(int argc, char *argv[])
+{
+  if (argc > 1)
+  {
+    Serial.print(F("Please send 0 args for this option! \r\n"));
+    Serial.println(F("Available commands are : reset"));
+    return (0);
+  }
+  else
+  {
+    sprintf(tm_cmd, "%s <BQ>", BM_RESET);
+    Serial.print("Command to send = ");
+    Serial.println(tm_cmd);
+    sendCMD(tm_cmd);
+    return 0;
+  }
+}
+
 void readTM(int cmd)
 {
   Serial.print("TM = ");
   Serial.println(cmd);
- 
+
   char aux[50];
   int byte2read;
   switch (cmd)
@@ -94,7 +153,7 @@ void readTM(int cmd)
     case 36:
     case 52:
     case 77:
-      byte2read = 14;
+      byte2read = HDR_LEN + 14;
       break;
     case 28:
     case 29:
@@ -102,24 +161,24 @@ void readTM(int cmd)
     case 31:
     case 32:
     case 51:
-      byte2read = 17;
+      byte2read = HDR_LEN + 17;
       break;
     case 58:
-      byte2read = 21;
+      byte2read = HDR_LEN + 21;
       break;
     case 53:
-      byte2read = 28;
+      byte2read = HDR_LEN + 28;
       break;
     case 0:
     case 55:
     case 56:
-      byte2read = 45;
+      byte2read = HDR_LEN + 45;
       break;
     case 78:
-      byte2read = 46;
+      byte2read = HDR_LEN + 46;
       break;
     default:
-      byte2read = 15;
+      byte2read = HDR_LEN + 15; //TODO case for len = 15
       break;
   }
   Serial.print("byte2read = ");
@@ -132,8 +191,8 @@ void readTM(int cmd)
     aux[i] = Wire.read();
     i++;
   }
-  for(i = 0;i < byte2read;i++)
-  Serial.write(aux[i]);
+  for (i = 0; i < byte2read; i++)
+    Serial.write(aux[i]);
   Serial.println();
 }
 
@@ -166,7 +225,6 @@ int cmd_tm(int argc, char *argv[])
       Serial.println("Wrong Telemetry (argv[1]");
       return 0;
     }
-    char tm_cmd[20];
     char param[6];
     switch (argv[2][0])
     {
@@ -188,7 +246,7 @@ int cmd_tm(int argc, char *argv[])
         break;
     }
 
-    sprintf(tm_cmd, "%s %s,%s", BMTEL, argv[1], param);
+    sprintf(tm_cmd, "%s %s,%s", BM_TEL, argv[1], param);
     Serial.print("Command to send = ");
     Serial.println(tm_cmd);
     sendCMD(tm_cmd);

@@ -46,6 +46,7 @@ void receiveEvent(int howMany)
 }
 
 char teste[20] = "Return Telemetry X";
+
 void requestEvent()
 {
   Serial.println("Sending Request");
@@ -55,7 +56,8 @@ void requestEvent()
 //    Wire1.read();
 //
 //  }
-  Wire1.write(teste);
+  Wire1.write('x');
+
   //teste++;
   return;
 

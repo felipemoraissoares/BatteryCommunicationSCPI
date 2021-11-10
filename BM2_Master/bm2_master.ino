@@ -16,9 +16,9 @@ uint8_t tm_data[15];
 char tm_cmd[20];
 // prototypes
 int cmd_tm(int argc, char *argv[]);
-int cmd_function(int argc, char *argv[]);
+int cmd_func(int argc, char *argv[]);
 int cmd_nvm(int argc, char *argv[]);
-int cmd_heater(int argc, char *argv[]);
+int cmd_heat(int argc, char *argv[]);
 int cmd_sleep(int argc, char *argv[]);
 int cmd_balance(int argc, char *argv[]);
 int cmd_debug(int argc, char *argv[]);
@@ -39,10 +39,11 @@ CMD_TABLE_MEM StCmdLineEntry CmdTable[] =
   { "help",    Cmd_help,    "  : Display list of commands" },
   { "h",       Cmd_help,    "     : alias for help" },
   { "?",       Cmd_help,    "     : alias for help" },
-  { "tm",      cmd_tm,      "   : Send BM2 Telemetry"},
-  { "func",   cmd_nvm,      "   : Function ID"},
+
+  { "func",   cmd_func,      "   : Function ID"},
   { "nvm",   cmd_nvm,      "   : Unlock/Write/Debug/Sleep Heater"},
-  { "heat",   cmd_sleep,      "   : On/Off/Auto Heater"},
+  { "tm",      cmd_tm,      "   : Send BM2 Telemetry"},
+  { "heat",   cmd_heat,      "   : On/Off/Auto Heater"},
   { "sleep",   cmd_sleep,      "   : Set or Abort Sleep Cycle"},
   { "bal",   cmd_balance,      "   : On/Off/Auto Balance Circuit"},
   { "debug",   cmd_debug,      "   : Enables/Disables Debug Info"},
@@ -97,7 +98,7 @@ void loop()
   // @@ Call other tasks here (not blocking obviously)
 }
 
-int cmd_function(int argc, char *argv[])
+int cmd_func(int argc, char *argv[])
 {
   if (argc != 2)
   {
@@ -107,7 +108,7 @@ int cmd_function(int argc, char *argv[])
   }
   else
   {
-    switch(atoi((argv[1][0])))
+    switch (atoi(argv[1]))
     {
       case 14:
       case 15:
@@ -197,7 +198,7 @@ int cmd_nvm(int argc, char *argv[])
   }
 }
 
-int cmd_heater(int argc, char *argv[])
+int cmd_heat(int argc, char *argv[])
 {
   if (argc != 2)
   {
@@ -512,7 +513,7 @@ void readTM(int cmd)
       break;
     default:
       Serial.print("Invalid TEL Param!!");
-      return 0;
+      return ;
       break;
   }
   Serial.print("byte2read = ");

@@ -16,8 +16,14 @@ uint8_t tm_data[15];
 char tm_cmd[20];
 // prototypes
 int cmd_tm(int argc, char *argv[]);
-int cmd_reset(int argc, char *argv[]);
+int cmd_function(int argc, char *argv[]);
+int cmd_nvm(int argc, char *argv[]);
+int cmd_heater(int argc, char *argv[]);
+int cmd_sleep(int argc, char *argv[]);
+int cmd_balance(int argc, char *argv[]);
+int cmd_debug(int argc, char *argv[]);
 int cmd_pf(int argc, char *argv[]);
+int cmd_reset(int argc, char *argv[]);
 void readTM(int cmd);
 void sendCMD(char* CMD);
 
@@ -34,8 +40,14 @@ CMD_TABLE_MEM StCmdLineEntry CmdTable[] =
   { "h",       Cmd_help,    "     : alias for help" },
   { "?",       Cmd_help,    "     : alias for help" },
   { "tm",      cmd_tm,      "   : Send BM2 Telemetry"},
-  { "reset",      cmd_reset,      "   : Send BM2 Reset"},
+  { "func",   cmd_nvm,      "   : Function ID"},
+  { "nvm",   cmd_nvm,      "   : Unlock/Write/Debug/Sleep Heater"},
+  { "heat",   cmd_sleep,      "   : On/Off/Auto Heater"},
+  { "sleep",   cmd_sleep,      "   : Set or Abort Sleep Cycle"},
+  { "bal",   cmd_balance,      "   : On/Off/Auto Balance Circuit"},
+  { "debug",   cmd_debug,      "   : Enables/Disables Debug Info"},
   { "pf",      cmd_pf,      "   : Send BM2 Assert/Clear PF"},
+  { "reset",      cmd_reset,      "   : Send BM2 Reset"},
   {  0, 0, 0 }
 };
 
@@ -85,6 +97,293 @@ void loop()
   // @@ Call other tasks here (not blocking obviously)
 }
 
+int cmd_function(int argc, char *argv[])
+{
+  if (argc != 2)
+  {
+    Serial.print(F("Please send 1 args for this option! \r\n"));
+    Serial.println(F("Available commands are : func function-ID"));
+    return (0);
+  }
+  else
+  {
+    switch(atoi((argv[1][0])))
+    {
+      case 14:
+      case 15:
+      case 16:
+      case 17:
+      case 20:
+      case 21:
+      case 22:
+      case 23:
+      case 24:
+      case 25:
+      case 26:
+      case 27:
+      case 28:
+      case 29:
+      case 30:
+      case 31:
+      case 32:
+      case 33:
+      case 34:
+      case 35:
+        sprintf(tm_cmd, "%s %s", BM_FUNC, argv[1]);
+        Serial.print("Command to send = ");
+        Serial.println(tm_cmd);
+        sendCMD(tm_cmd);
+        break;
+      default:
+        Serial.print("Invalid Function-ID!!");
+        return 0;
+        break;
+    }
+  }
+}
+
+
+int cmd_nvm(int argc, char *argv[])
+{
+  if (argc == 2)
+  {
+    switch (argv[1][0])
+    {
+      case 'u':
+        sprintf(tm_cmd, "%s, 12345", BM_NVM);
+        Serial.print("Command to send = ");
+        Serial.println(tm_cmd);
+        sendCMD(tm_cmd);
+        break;
+      case 'w':
+        sprintf(tm_cmd, "%s, 1", BM_NVM);
+        Serial.print("Command to send = ");
+        Serial.println(tm_cmd);
+        sendCMD(tm_cmd);
+        break;
+      default:
+        Serial.println("Wrong Parameter, u to Unlock, w to Write, d to Debug and s to Sleep");
+        return (0);
+        break;
+    }
+  }
+  else if (argc == 3)
+  {
+    switch (argv[1][0])
+    {
+      case 'd':
+        sprintf(tm_cmd, "%s,%s", BM_NVM, argv[2]); //Check what is scale_factor
+        Serial.print("Command to send = ");
+        Serial.println(tm_cmd);
+        sendCMD(tm_cmd);
+        break;
+      case 's':
+        sprintf(tm_cmd, "%s,%s", BM_NVM, argv[2]); //Check what is scale_factor
+        Serial.print("Command to send = ");
+        Serial.println(tm_cmd);
+        sendCMD(tm_cmd);
+        break;
+      default:
+        Serial.println("Wrong Parameter, u to Unlock, w to Write, d to Debug and s to Sleep");
+        return (0);
+        break;
+    }
+  }
+  else
+  {
+    Serial.print(F("Please send 1 or 2 args for this option! \r\n"));
+    Serial.println(F("Available commands are : nvm u to Unlock, w to Write, d to Debug and s to Sleep"));
+    return (0);
+  }
+}
+
+int cmd_heater(int argc, char *argv[])
+{
+  if (argc != 2)
+  {
+    Serial.print(F("Please send 1 args for this option! \r\n"));
+    Serial.println(F("Available commands are : heat on/off/auto"));
+    return (0);
+  }
+  else
+  {
+    if (strcmp(argv[1], "on") == 0)
+    {
+      sprintf(tm_cmd, "%s ON", BM_HEAT);
+      Serial.print("Command to send = ");
+      Serial.println(tm_cmd);
+      sendCMD(tm_cmd);
+    }
+    else if (strcmp(argv[1], "off") == 0)
+    {
+      sprintf(tm_cmd, "%s OFF", BM_HEAT);
+      Serial.print("Command to send = ");
+      Serial.println(tm_cmd);
+      sendCMD(tm_cmd);
+    }
+    else if (strcmp(argv[1], "auto") == 0)
+    {
+      sprintf(tm_cmd, "%s AUTO", BM_HEAT);
+      Serial.print("Command to send = ");
+      Serial.println(tm_cmd);
+      sendCMD(tm_cmd);
+    }
+    else
+    {
+      Serial.println("Wrong param");
+      Serial.println(F("Available commands are : heat on/off/auto"));
+      return (0);
+    }
+  }
+}
+
+int cmd_sleep(int argc, char *argv[])
+{
+  if (argc == 2)
+  {
+    if (strcmp(argv[1], "stop") == 0)
+    {
+      sprintf(tm_cmd, "%s STOP", BM_SLEEP);
+      Serial.print("Command to send = ");
+      Serial.println(tm_cmd);
+      sendCMD(tm_cmd);
+    }
+    else if (strcmp(argv[1], "abort") == 0)
+    {
+      sprintf(tm_cmd, "%s ABORT", BM_SLEEP);
+      Serial.print("Command to send = ");
+      Serial.println(tm_cmd);
+      sendCMD(tm_cmd);
+    }
+    else
+    {
+      Serial.println("Wrong param");
+      Serial.println(F("Available commands are : sleep stop/abort"));
+      return (0);
+    }
+  }
+  else if (argc == 3)
+  {
+    if (strcmp(argv[1], "for") == 0)
+    {
+      if (atoi(argv[2]) < 1 ||  atoi(argv[2]) > 7200)
+      {
+        Serial.println("Insert valid Sleep range ->  1 to 7200 minutes");
+        return (0);
+      }
+      else
+      {
+        sprintf(tm_cmd, "%s FOR, %s ", BM_SLEEP, argv[2]);
+        Serial.print("Command to send = ");
+        Serial.println(tm_cmd);
+        sendCMD(tm_cmd);
+      }
+    }
+  }
+  else
+  {
+    Serial.print(F("Please send 1 or 2 args for this option! \r\n"));
+    Serial.println(F("Available commands are : sleep for minutes, or stop/abort"));
+    return (0);
+  }
+}
+
+int cmd_balance(int argc, char *argv[])
+{
+  if (argc != 2)
+  {
+    Serial.print(F("Please send 1 args for this option! \r\n"));
+    Serial.println(F("Available commands are : bal on/off/auto"));
+    return (0);
+  }
+  else
+  {
+    if (strcmp(argv[1], "on") == 0)
+    {
+      sprintf(tm_cmd, "%s ON", BM_BALANCE);
+      Serial.print("Command to send = ");
+      Serial.println(tm_cmd);
+      sendCMD(tm_cmd);
+    }
+    else if (strcmp(argv[1], "off") == 0)
+    {
+      sprintf(tm_cmd, "%s OFF", BM_BALANCE);
+      Serial.print("Command to send = ");
+      Serial.println(tm_cmd);
+      sendCMD(tm_cmd);
+    }
+    else if (strcmp(argv[1], "auto") == 0)
+    {
+      sprintf(tm_cmd, "%s AUTO", BM_BALANCE);
+      Serial.print("Command to send = ");
+      Serial.println(tm_cmd);
+      sendCMD(tm_cmd);
+    }
+    else
+    {
+      Serial.println("Wrong param");
+      Serial.println(F("Available commands are : bal on/off/auto"));
+      return (0);
+    }
+  }
+}
+
+int cmd_debug(int argc, char *argv[])
+{
+  if (argc != 3)
+  {
+    Serial.print(F("Please send 2 args for this option! \r\n"));
+    Serial.println(F("Available commands are : debug e/d  mask "));
+    return (0);
+  }
+  else
+  {
+    switch (argv[1][0])
+    {
+      case 'd':
+        if ( (strcmp(argv[2], "0x0001") == 0) || (strcmp(argv[2], "0x0002") == 0) || (strcmp(argv[2], "0x0004") == 0) || (strcmp(argv[2], "0x0008") == 0) || (strcmp(argv[2], "0x0010") == 0) )
+        {
+          sprintf(tm_cmd, "%s %s, %s", BM_DEUBG, argv[1], argv[2]);
+          Serial.print("Command to send = ");
+          Serial.println(tm_cmd);
+          sendCMD(tm_cmd);
+        }
+        else
+        {
+          Serial.println("Invalid Mask, please type a valid mask:");
+          Serial.println("debug, e or d, 0x0001");
+          Serial.println("debug, e or d, 0x0002");
+          Serial.println("debug, e or d, 0x0004");
+          Serial.println("debug, e or d, 0x0008");
+          Serial.println("debug, e or d, 0x0010");
+        }
+        break;
+      case 'n':
+        if ( (strcmp(argv[2], "0x0001") == 0) || (strcmp(argv[2], "0x0002") == 0) || (strcmp(argv[2], "0x0004") == 0) || (strcmp(argv[2], "0x0008") == 0) || (strcmp(argv[2], "0x0010") == 0) )
+        {
+          sprintf(tm_cmd, "%s %s, %s", BM_DEUBG, argv[1], argv[2]);
+          Serial.print("Command to send = ");
+          Serial.println(tm_cmd);
+          sendCMD(tm_cmd);
+        }
+        else
+        {
+          Serial.println("Invalid Mask, please type a valid mask:");
+          Serial.println("debug, e or d, 0x0001");
+          Serial.println("debug, e or d, 0x0002");
+          Serial.println("debug, e or d, 0x0004");
+          Serial.println("debug, e or d, 0x0008");
+          Serial.println("debug, e or d, 0x0010");
+        }
+        break;
+      default:
+        Serial.println("Wrong param, e to Enable or d to Disable");
+        return (0);
+        break;
+    }
+  }
+}
+
 int cmd_pf(int argc, char *argv[])
 {
   if (argc != 2)
@@ -95,19 +394,16 @@ int cmd_pf(int argc, char *argv[])
   }
   else
   {
-    Serial.println(argv[1]);
-    Serial.println(strcmp(argv[1], "on"));
-
     if (strcmp(argv[1], "on") == 0)
     {
-      sprintf(tm_cmd, "%s <ON>", BM_PFIN);
+      sprintf(tm_cmd, "%s ON", BM_PFIN);
       Serial.print("Command to send = ");
       Serial.println(tm_cmd);
       sendCMD(tm_cmd);
     }
     else if (strcmp(argv[1], "off") == 0)
     {
-      sprintf(tm_cmd, "%s <OFF>", BM_PFIN);
+      sprintf(tm_cmd, "%s OFF", BM_PFIN);
       Serial.print("Command to send = ");
       Serial.println(tm_cmd);
       sendCMD(tm_cmd);
@@ -131,11 +427,11 @@ int cmd_reset(int argc, char *argv[])
   }
   else
   {
-    sprintf(tm_cmd, "%s <BQ>", BM_RESET);
+    sprintf(tm_cmd, "%s BQ", BM_RESET);
     Serial.print("Command to send = ");
     Serial.println(tm_cmd);
     sendCMD(tm_cmd);
-    return 0;
+    return (0);
   }
 }
 
@@ -160,7 +456,6 @@ void readTM(int cmd)
     case 30:
     case 31:
     case 32:
-    case 51:
       byte2read = HDR_LEN + 17;
       break;
     case 58:
@@ -177,8 +472,47 @@ void readTM(int cmd)
     case 78:
       byte2read = HDR_LEN + 46;
       break;
+    case 8:
+    case 9:
+    case 10:
+    case 11:
+    case 15:
+    case 16:
+    case 17:
+    case 18:
+    case 19:
+    case 20:
+    case 21:
+    case 22:
+    case 23:
+    case 24:
+    case 25:
+    case 33:
+    case 34:
+    case 37:
+    case 38:
+    case 48:
+    case 49:
+    case 50:
+    case 51:
+    case 57:
+    case 60:
+    case 61:
+    case 62:
+    case 63:
+    case 71:
+    case 72:
+    case 73:
+    case 74:
+    case 84:
+    case 93:
+    case 114:
+    case 115:
+      byte2read = HDR_LEN + 15;
+      break;
     default:
-      byte2read = HDR_LEN + 15; //TODO case for len = 15
+      Serial.print("Invalid TEL Param!!");
+      return 0;
       break;
   }
   Serial.print("byte2read = ");

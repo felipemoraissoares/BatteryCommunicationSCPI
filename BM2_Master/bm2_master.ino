@@ -151,13 +151,13 @@ int cmd_nvm(int argc, char *argv[])
     switch (argv[1][0])
     {
       case 'u':
-        sprintf(tm_cmd, "%s, 12345", BM_NVM);
+        sprintf(tm_cmd, "%s UNLOCK, 12345", BM_NVM);
         Serial.print("Command to send = ");
         Serial.println(tm_cmd);
         sendCMD(tm_cmd);
         break;
       case 'w':
-        sprintf(tm_cmd, "%s, 1", BM_NVM);
+        sprintf(tm_cmd, "%s WRITE, 1", BM_NVM);
         Serial.print("Command to send = ");
         Serial.println(tm_cmd);
         sendCMD(tm_cmd);
@@ -173,13 +173,13 @@ int cmd_nvm(int argc, char *argv[])
     switch (argv[1][0])
     {
       case 'd':
-        sprintf(tm_cmd, "%s,%s", BM_NVM, argv[2]); //Check what is scale_factor
+        sprintf(tm_cmd, "%s DEBUG,%s", BM_NVM, argv[2]); //Check what is scale_factor
         Serial.print("Command to send = ");
         Serial.println(tm_cmd);
         sendCMD(tm_cmd);
         break;
       case 's':
-        sprintf(tm_cmd, "%s,%s", BM_NVM, argv[2]); //Check what is scale_factor
+        sprintf(tm_cmd, "%s SLEEP_SF,%s", BM_NVM, argv[2]); //Check what is scale_factor
         Serial.print("Command to send = ");
         Serial.println(tm_cmd);
         sendCMD(tm_cmd);

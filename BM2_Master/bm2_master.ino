@@ -24,6 +24,9 @@ int cmd_balance(int argc, char *argv[]);
 int cmd_debug(int argc, char *argv[]);
 int cmd_pf(int argc, char *argv[]);
 int cmd_reset(int argc, char *argv[]);
+//int cmd_flash(int argc, char *argv[]);
+//int cmd_maccess(int argc, char *argv[]);
+//int cmd_smb(int argc, char *argv[]);
 void readTM(int cmd);
 void sendCMD(char* CMD);
 
@@ -39,16 +42,18 @@ CMD_TABLE_MEM StCmdLineEntry CmdTable[] =
   { "help",    Cmd_help,    "  : Display list of commands" },
   { "h",       Cmd_help,    "     : alias for help" },
   { "?",       Cmd_help,    "     : alias for help" },
-
-  { "func",   cmd_func,      "   : Function ID"},
-  { "nvm",   cmd_nvm,      "   : Unlock/Write/Debug/Sleep Heater"},
-  { "tm",      cmd_tm,      "   : Send BM2 Telemetry"},
-  { "heat",   cmd_heat,      "   : On/Off/Auto Heater"},
-  { "sleep",   cmd_sleep,      "   : Set or Abort Sleep Cycle"},
-  { "bal",   cmd_balance,      "   : On/Off/Auto Balance Circuit"},
-  { "debug",   cmd_debug,      "   : Enables/Disables Debug Info"},
-  { "pf",      cmd_pf,      "   : Send BM2 Assert/Clear PF"},
-  { "reset",      cmd_reset,      "   : Send BM2 Reset"},
+  //{ "flash",   cmd_flash,      "   : Reads/Writes to the Gas Gauge Flash memory"},
+  //{ "maccess",   cmd_maccess,      "   : Writes or reads to/from the ManufacturerAccess register on the Gas Gauge chip"},
+  // { "smb",   cmd_smb,      "   : Writes or reads to/from the BQ34Z Gas Gauge chip registers"},
+  { "func",   cmd_func,     "  : Function ID"},
+  { "nvm",   cmd_nvm,       "   : Unlock/Write/Debug/Sleep Heater"},
+  { "tm",      cmd_tm,      "    : Send BM2 Telemetry"},
+  { "heat",   cmd_heat,     "  : On/Off/Auto Heater"},
+  { "sleep",   cmd_sleep,   " : Set or Abort Sleep Cycle"},
+  { "bal",   cmd_balance,   "   : On/Off/Auto Balance Circuit"},
+  { "debug",   cmd_debug,   " : Enables/Disables Debug Info"},
+  { "pf",      cmd_pf,      "    : Send BM2 Assert/Clear PF"},
+  { "reset",      cmd_reset,      "  : Send BM2 Reset"},
   {  0, 0, 0 }
 };
 
@@ -93,10 +98,10 @@ void loop()
 
   // process cmd
   CmdRefresh();
-
-
   // @@ Call other tasks here (not blocking obviously)
 }
+
+
 
 int cmd_func(int argc, char *argv[])
 {
@@ -555,38 +560,95 @@ int cmd_tm(int argc, char *argv[])
   }
   else
   {
-    if (atoi(argv[1]) < 0 ||  atoi(argv[1]) > 115)
+    switch (atoi(argv[1]))
     {
-      Serial.println("Wrong Telemetry (argv[1]");
-      return 0;
-    }
-    char param[6];
-    switch (argv[2][0])
-    {
-      case 'd':
-        strcpy(param, "DATA");
-        break;
-      case 'n':
-        strcpy(param, "NAME");
-        break;
-      case 'l':
-        strcpy(param, "LENGTH");
-        break;
-      case 'a':
-        strcpy(param, "ASCII");
+      case 0:
+      case 8:
+      case 9:
+      case 10:
+      case 11:
+      case 13:
+      case 14:
+      case 15:
+      case 16:
+      case 17:
+      case 18:
+      case 19:
+      case 20:
+      case 21:
+      case 22:
+      case 23:
+      case 24:
+      case 25:
+      case 28:
+      case 29:
+      case 30:
+      case 31:
+      case 32:
+      case 33:
+      case 34:
+      case 36:
+      case 37:
+      case 38:
+      case 48:
+      case 49:
+      case 50:
+      case 51:
+      case 52:
+      case 53:
+      case 55:
+      case 56:
+      case 57:
+      case 58:
+      case 60:
+      case 61:
+      case 62:
+      case 63:
+      case 71:
+      case 72:
+      case 73:
+      case 74:
+      case 77:
+      case 78:
+      case 84:
+      case 93:
+      case 114:
+      case 115:
+        char param[6];
+        switch (argv[2][0])
+        {
+          case 'd':
+            strcpy(param, "DATA");
+            break;
+          case 'n':
+            strcpy(param, "NAME");
+            break;
+          case 'l':
+            strcpy(param, "LENGTH");
+            break;
+          case 'a':
+            strcpy(param, "ASCII");
+            break;
+          default:
+            Serial.println("Wrong param");
+            return 0;
+            break;
+        }
+
+        sprintf(tm_cmd, "%s %s,%s", BM_TEL, argv[1], param);
+        Serial.print("Command to send = ");
+        Serial.println(tm_cmd);
+        sendCMD(tm_cmd);
+        delay(I2C_RW_DELAY);
+        readTM(atoi(argv[1]));
+        return 0;
         break;
       default:
-        Serial.println("Wrong param");
+        Serial.println("Wrong Telemetry (argv[1])");
         return 0;
         break;
     }
 
-    sprintf(tm_cmd, "%s %s,%s", BM_TEL, argv[1], param);
-    Serial.print("Command to send = ");
-    Serial.println(tm_cmd);
-    sendCMD(tm_cmd);
-    delay(I2C_RW_DELAY);
-    readTM(atoi(argv[1]));
   }
 }
 

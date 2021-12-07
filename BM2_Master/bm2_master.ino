@@ -40,7 +40,7 @@ CMD_TABLE_MEM StCmdLineEntry CmdTable[] =
   { "h",       Cmd_help,    "     : alias for help" },
   { "?",       Cmd_help,    "     : alias for help" },
   { "tm",      cmd_tm,      "   : Send BM2 Telemetry"},
-  { "func",   cmd_nvm,      "   : Function ID"},
+  { "func",   cmd_function,      "   : Function ID"},
   { "nvm",   cmd_nvm,      "   : Unlock/Write/Debug/Sleep Heater"},
   { "heat",   cmd_sleep,      "   : On/Off/Auto Heater"},
   { "sleep",   cmd_sleep,      "   : Set or Abort Sleep Cycle"},
@@ -107,7 +107,7 @@ int cmd_function(int argc, char *argv[])
   }
   else
   {
-    switch(atoi((argv[1][0])))
+    switch(atoi(argv[1]))
     {
       case 14:
       case 15:
@@ -185,7 +185,7 @@ int cmd_nvm(int argc, char *argv[])
         break;
       default:
         Serial.println("Wrong Parameter, u to Unlock, w to Write, d to Debug and s to Sleep");
-        return (0);
+        return 0;
         break;
     }
   }
@@ -343,7 +343,7 @@ int cmd_debug(int argc, char *argv[])
       case 'd':
         if ( (strcmp(argv[2], "0x0001") == 0) || (strcmp(argv[2], "0x0002") == 0) || (strcmp(argv[2], "0x0004") == 0) || (strcmp(argv[2], "0x0008") == 0) || (strcmp(argv[2], "0x0010") == 0) )
         {
-          sprintf(tm_cmd, "%s %s, %s", BM_DEUBG, argv[1], argv[2]);
+          sprintf(tm_cmd, "%s DISable, %s", BM_DEUBG, argv[2]);
           Serial.print("Command to send = ");
           Serial.println(tm_cmd);
           sendCMD(tm_cmd);
@@ -361,7 +361,7 @@ int cmd_debug(int argc, char *argv[])
       case 'n':
         if ( (strcmp(argv[2], "0x0001") == 0) || (strcmp(argv[2], "0x0002") == 0) || (strcmp(argv[2], "0x0004") == 0) || (strcmp(argv[2], "0x0008") == 0) || (strcmp(argv[2], "0x0010") == 0) )
         {
-          sprintf(tm_cmd, "%s %s, %s", BM_DEUBG, argv[1], argv[2]);
+          sprintf(tm_cmd, "%s ENable, %s", BM_DEUBG, argv[2]);
           Serial.print("Command to send = ");
           Serial.println(tm_cmd);
           sendCMD(tm_cmd);

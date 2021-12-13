@@ -13,9 +13,9 @@ char test[15];
 void setup()
 {
 
-  Wire1.begin(ADDR);                // join i2c bus with address #4
-  Wire1.onReceive(receiveEvent); // register event
-  Wire1.onRequest(requestEvent);
+  Wire.begin(ADDR);                // join i2c bus with address #4
+  Wire.onReceive(receiveEvent); // register event
+  Wire.onRequest(requestEvent);
   Serial.begin(115200);           // start serial for output
   //Serial1.begin(115200);
   Serial.println("boot: I2C sub slave");
@@ -31,9 +31,9 @@ void receiveEvent(int howMany)
 {
 
   Serial.println(" - TC Received");
-  while (Wire1.available()) // loop through all but the last
+  while (Wire.available()) // loop through all but the last
   {
-    uint8_t c = Wire1.read(); // receive byte as a character
+    uint8_t c = Wire.read(); // receive byte as a character
 
     //Serial.print("0x");
     //Serial.print(c, HEX);        // print the character
@@ -51,12 +51,12 @@ void requestEvent()
 {
   Serial.println("Sending Request");
 
-//  while (Wire1.available())
+//  while (Wire.available())
 //  {
-//    Wire1.read();
+//    Wire.read();
 //
 //  }
-  Wire1.write('x');
+  Wire.write('x');
 
   //teste++;
   return;

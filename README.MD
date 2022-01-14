@@ -6,7 +6,7 @@ This project is about to test a Pumpkin Battery Module 2 pack using Arduino to s
 
 **Used Tools** 
 
-* SCPI (Standard Commands for Programmable Instruments): is a communication protocol mainly used to control and measure equipments. SCPI commands consist of text encoded in ASCII and separated by a colon (:) and are usually easy to understand and low complexity, because the SCPI standard was developed many years ago and covers a multitude of instrumentation equipment, including those with low data processing capacity. The commands implemented in this project are following Pumpkin reference manual and are found in the table located in ./\BatteryCommunicationSCPI\SCPI_Commands/CMD_Table_BM2.xlsx
+* SCPI (Standard Commands for Programmable Instruments): is a communication protocol mainly used to control and measure equipments. SCPI commands consist of text encoded in ASCII and separated by a colon (:) and are usually easy to understand and low complexity, because the SCPI standard was developed many years ago and covers a multitude of instrumentation equipment, including those with low data processing capacity. The commands implemented in this project are following Pumpkin reference manual and are found in the table located in [BatteryCommunicationSCPI](https://github.com/felipemoraissoares/BatteryCommunicationSCPI)/[SCPI_Commands](https://github.com/felipemoraissoares/BatteryCommunicationSCPI/tree/main/SCPI_Commands)
 
 * Arduino: Was used two types of Arduino in this project 
 

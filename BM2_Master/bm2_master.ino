@@ -42,17 +42,7 @@ CMD_TABLE_MEM StCmdLineEntry CmdTable[] =
   { "help",    Cmd_help,    "  : Display list of commands" },
   { "h",       Cmd_help,    "     : alias for help" },
   { "?",       Cmd_help,    "     : alias for help" },
-<<<<<<< HEAD
   { "tm",      cmd_tm,      "   : Send BM2 Telemetry"},
-  { "func",   cmd_function,      "   : Function ID"},
-  { "nvm",   cmd_nvm,      "   : Unlock/Write/Debug/Sleep Heater"},
-  { "heat",   cmd_sleep,      "   : On/Off/Auto Heater"},
-  { "sleep",   cmd_sleep,      "   : Set or Abort Sleep Cycle"},
-  { "bal",   cmd_balance,      "   : On/Off/Auto Balance Circuit"},
-  { "debug",   cmd_debug,      "   : Enables/Disables Debug Info"},
-  { "pf",      cmd_pf,      "   : Send BM2 Assert/Clear PF"},
-  { "reset",      cmd_reset,      "   : Send BM2 Reset"},
-=======
   //{ "flash",   cmd_flash,      "   : Reads/Writes to the Gas Gauge Flash memory"},
   //{ "maccess",   cmd_maccess,      "   : Writes or reads to/from the ManufacturerAccess register on the Gas Gauge chip"},
   // { "smb",   cmd_smb,      "   : Writes or reads to/from the BQ34Z Gas Gauge chip registers"},
@@ -65,7 +55,6 @@ CMD_TABLE_MEM StCmdLineEntry CmdTable[] =
   { "debug",   cmd_debug,   " : Enables/Disables Debug Info"},
   { "pf",      cmd_pf,      "    : Send BM2 Assert/Clear PF"},
   { "reset",      cmd_reset,      "  : Send BM2 Reset"},
->>>>>>> 31ac2233a99f600a19d65bd907a2e8c89bf041d6
   {  0, 0, 0 }
 };
 
@@ -125,11 +114,8 @@ int cmd_func(int argc, char *argv[])
   }
   else
   {
-<<<<<<< HEAD
-    switch(atoi(argv[1]))
-=======
+
     switch (atoi(argv[1]))
->>>>>>> 31ac2233a99f600a19d65bd907a2e8c89bf041d6
     {
       case 14:
       case 15:

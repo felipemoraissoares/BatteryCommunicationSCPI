@@ -19,12 +19,12 @@ void setup()
   Serial.begin(115200);           // start serial for output
   //Serial1.begin(115200);
   Serial.println("boot: I2C sub slave");
-  
+
 }
 
 void loop()
 {
-  
+
 }
 
 void receiveEvent(int howMany)
@@ -36,9 +36,9 @@ void receiveEvent(int howMany)
     uint8_t c = Wire.read(); // receive byte as a character
 
     //Serial.print("0x");
-    //Serial.print(c, HEX);        // print the character
-    Serial.write(c);        // print the character
-    //Serial.print(" ");
+    Serial.print(c, HEX);        // print the character
+    // Serial.write(c);        // print the character
+    Serial.print(" ");
     //    Serial.println((char)c);
   }
   Serial.println();
@@ -51,11 +51,11 @@ void requestEvent()
 {
   Serial.println("Sending Request");
 
-//  while (Wire.available())
-//  {
-//    Wire.read();
-//
-//  }
+  //  while (Wire.available())
+  //  {
+  //    Wire.read();
+  //
+  //  }
   Wire.write('x');
 
   //teste++;

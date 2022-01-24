@@ -513,6 +513,7 @@ void readTM(int cmd)
     case 73:
     case 74:
     case 84:
+    case 90:
     case 93:
     case 114:
     case 115:
@@ -534,8 +535,17 @@ void readTM(int cmd)
     i++;
   }
   for (i = 0; i < byte2read; i++)
-    Serial.write(aux[i]);
+  {
+    Serial.print(aux[i]);
+  }
   Serial.println();
+  for (i = 0; i < byte2read; i++)
+  {
+    Serial.print(aux[i], HEX);
+    Serial.print(" ");
+  }
+  Serial.println();
+  memset(aux,0,sizeof(aux));
 }
 
 void sendCMD(char* CMD)
@@ -613,6 +623,7 @@ int cmd_tm(int argc, char *argv[])
       case 77:
       case 78:
       case 84:
+      case 90:
       case 93:
       case 114:
       case 115:
@@ -637,9 +648,15 @@ int cmd_tm(int argc, char *argv[])
             break;
         }
 
-        sprintf(tm_cmd, "%s %s,%s", BM_TEL, argv[1], param);
+        sprintf(tm_cmd, "%s %s,%s\n", BM_TEL, argv[1], param);
         Serial.print("Command to send = ");
         Serial.println(tm_cmd);
+        for (int i = 0; i <= 20; i++)
+        {
+          Serial.print(tm_cmd[i],HEX);
+          Serial.print(" ");
+        }
+        Serial.println();
         sendCMD(tm_cmd);
         delay(I2C_RW_DELAY);
         readTM(atoi(argv[1]));

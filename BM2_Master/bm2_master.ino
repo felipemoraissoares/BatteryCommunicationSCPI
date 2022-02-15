@@ -27,7 +27,7 @@ int cmd_reset(int argc, char *argv[]);
 //int cmd_flash(int argc, char *argv[]);
 //int cmd_maccess(int argc, char *argv[]);
 //int cmd_smb(int argc, char *argv[]);
-void readTM(int cmd);
+void readTM(int cmd, char* param);
 void sendCMD(char* CMD);
 
 
@@ -42,7 +42,6 @@ CMD_TABLE_MEM StCmdLineEntry CmdTable[] =
   { "help",    Cmd_help,    "  : Display list of commands" },
   { "h",       Cmd_help,    "     : alias for help" },
   { "?",       Cmd_help,    "     : alias for help" },
-  { "tm",      cmd_tm,      "   : Send BM2 Telemetry"},
   //{ "flash",   cmd_flash,      "   : Reads/Writes to the Gas Gauge Flash memory"},
   //{ "maccess",   cmd_maccess,      "   : Writes or reads to/from the ManufacturerAccess register on the Gas Gauge chip"},
   // { "smb",   cmd_smb,      "   : Writes or reads to/from the BQ34Z Gas Gauge chip registers"},
@@ -443,86 +442,96 @@ int cmd_reset(int argc, char *argv[])
   }
 }
 
-void readTM(int cmd)
+void readTM(int cmd, char* param)
 {
   Serial.print("TM = ");
   Serial.println(cmd);
 
-  char aux[50];
+  char aux[150];
   int byte2read;
-  switch (cmd)
+  if (strcmp(param, "NAME") == 0)
+    byte2read = HDR_LEN + 32;
+  else if (strcmp(param, "LENGTH") == 0)
+    byte2read = HDR_LEN + 2;
+  else if (strcmp(param, "ASCII") == 0)
+    byte2read = HDR_LEN + 128;
+  else if (strcmp(param, "DATA") == 0)
   {
-    case 13:
-    case 14:
-    case 36:
-    case 52:
-    case 77:
-      byte2read = HDR_LEN + 14;
-      break;
-    case 28:
-    case 29:
-    case 30:
-    case 31:
-    case 32:
-      byte2read = HDR_LEN + 17;
-      break;
-    case 58:
-      byte2read = HDR_LEN + 21;
-      break;
-    case 53:
-      byte2read = HDR_LEN + 28;
-      break;
-    case 0:
-    case 55:
-    case 56:
-      byte2read = HDR_LEN + 45;
-      break;
-    case 78:
-      byte2read = HDR_LEN + 46;
-      break;
-    case 8:
-    case 9:
-    case 10:
-    case 11:
-    case 15:
-    case 16:
-    case 17:
-    case 18:
-    case 19:
-    case 20:
-    case 21:
-    case 22:
-    case 23:
-    case 24:
-    case 25:
-    case 33:
-    case 34:
-    case 37:
-    case 38:
-    case 48:
-    case 49:
-    case 50:
-    case 51:
-    case 57:
-    case 60:
-    case 61:
-    case 62:
-    case 63:
-    case 71:
-    case 72:
-    case 73:
-    case 74:
-    case 84:
-    case 90:
-    case 93:
-    case 114:
-    case 115:
-      byte2read = HDR_LEN + 15;
-      break;
-    default:
-      Serial.print("Invalid TEL Param!!");
-      return ;
-      break;
+    switch (cmd)
+    {
+      case 13:
+      case 14:
+      case 36:
+      case 52:
+      case 77:
+        byte2read = HDR_LEN + 14;
+        break;
+      case 28:
+      case 29:
+      case 30:
+      case 31:
+      case 32:
+      case 54:
+        byte2read = HDR_LEN + 17;
+        break;
+      case 58:
+        byte2read = HDR_LEN + 21;
+        break;
+      case 53:
+        byte2read = HDR_LEN + 28;
+        break;
+      case 0:
+      case 55:
+      case 56:
+        byte2read = HDR_LEN + 45;
+        break;
+      case 78:
+        byte2read = HDR_LEN + 46;
+        break;
+      case 8:
+      case 9:
+      case 10:
+      case 11:
+      case 15:
+      case 16:
+      case 17:
+      case 18:
+      case 19:
+      case 20:
+      case 21:
+      case 22:
+      case 23:
+      case 24:
+      case 25:
+      case 33:
+      case 34:
+      case 37:
+      case 38:
+      case 48:
+      case 49:
+      case 50:
+      case 51:
+      case 57:
+      case 60:
+      case 61:
+      case 62:
+      case 63:
+      case 71:
+      case 72:
+      case 73:
+      case 74:
+      case 84:
+      case 90:
+      case 93:
+      case 114:
+      case 115:
+        byte2read = HDR_LEN + 15;
+        break;
+      default:
+        Serial.print("Invalid TEL Param!!");
+        return ;
+        break;
+    }
   }
   Serial.print("byte2read = ");
   Serial.println(byte2read);
@@ -532,20 +541,26 @@ void readTM(int cmd)
   while (Wire.available())
   {
     aux[i] = Wire.read();
-    i++;
+    if (aux[i] == '\0')
+      byte2read = i;
+    else
+      i++;
   }
+//  for (int j = 0; j < byte2read; j++)
+//  {
+//    Serial.print(aux[i]);
+//  }
+//  Serial.println();
+//  Serial.print("new byte2read = ");
+//  Serial.println(byte2read);
   for (i = 0; i < byte2read; i++)
   {
-    Serial.print(aux[i]);
-  }
-  Serial.println();
-  for (i = 0; i < byte2read; i++)
-  {
+    Serial.print("0x");
     Serial.print(aux[i], HEX);
     Serial.print(" ");
   }
   Serial.println();
-  memset(aux,0,sizeof(aux));
+  memset(aux, 0, sizeof(aux));
 }
 
 void sendCMD(char* CMD)
@@ -608,6 +623,7 @@ int cmd_tm(int argc, char *argv[])
       case 51:
       case 52:
       case 53:
+      case 54:
       case 55:
       case 56:
       case 57:
@@ -653,13 +669,13 @@ int cmd_tm(int argc, char *argv[])
         Serial.println(tm_cmd);
         for (int i = 0; i <= 20; i++)
         {
-          Serial.print(tm_cmd[i],HEX);
+          Serial.print(tm_cmd[i], HEX);
           Serial.print(" ");
         }
         Serial.println();
         sendCMD(tm_cmd);
         delay(I2C_RW_DELAY);
-        readTM(atoi(argv[1]));
+        readTM(atoi(argv[1]), param);
         return 0;
         break;
       default:

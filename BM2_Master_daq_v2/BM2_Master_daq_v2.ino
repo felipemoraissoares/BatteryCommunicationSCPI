@@ -73,35 +73,36 @@ void setup()
 {
   // startup serial and wait for it to be opened...
   Serial.begin(115200);
-  Serial2.begin(115200);
-  Serial2.println("CLEARDATA");
-  Serial2.print("LABEL,Time,Temperature[0.1K],Voltage[mV],Current[mA],AVG Current[mA],");
-  Serial2.print("AVG Time Empty[min],AVG Time Full[min], Charge Current[mA],");
-  Serial2.print("Charge Volt[mV],Cycle Count,Last MIN Volt[mV], Last MAX Volt[mV],");
-  Serial2.print("State of Charge [%],");
-  Serial2.print("Cell Temp1[0.1K],Cell Temp2[0.1K],Cell Temp3[0.1K],Cell Temp4[0.1K],");
-  Serial2.print("Cell Temp5[0.1K],Cell Temp6[0.1K],Cell Temp7[0.1K],Cell Temp8[0.1K],");
-  Serial2.print("Cell Volt1[mV],Cell Volt2[mV],Cell Volt3[mV],Cell Volt4[mV],");
-  Serial2.println("Pack Volt[mV],AVG Volt[mV], Board Temp[0.1K],");
-  // Serial2.print("");
+  // Serial.begin(115200);
+  Serial.println("CLEARDATA");
+  //Serial.println("LABEL,Time,Temperature[0.1K]");
+    Serial.print("LABEL,Time,Temperature[0.1K],Voltage[mV],Current[mA],AVG Current[mA],");
+    Serial.print("AVG Time Empty[min],AVG Time Full[min], Charge Current[mA],");
+    Serial.print("Charge Volt[mV],Cycle Count,Last MIN Volt[mV], Last MAX Volt[mV],");
+    Serial.print("State of Charge [%],");
+    Serial.print("Cell Temp1[0.1K],Cell Temp2[0.1K],Cell Temp3[0.1K],Cell Temp4[0.1K],");
+    Serial.print("Cell Temp5[0.1K],Cell Temp6[0.1K],Cell Temp7[0.1K],Cell Temp8[0.1K],");
+    Serial.print("Cell Volt1[mV],Cell Volt2[mV],Cell Volt3[mV],Cell Volt4[mV],");
+    Serial.println("Pack Volt[mV],AVG Volt[mV], Board Temp[0.1K],");
+    // Serial.print("");
   Wire.begin();
   Wire.setClock(I2C_BAUDRATE);
   // say hello
-  Serial.print(F("\r\n\r\nArduino BM2 monitor v1.0\r\n"));
-  Serial.print(F("Running on "));
+  //Serial.print(F("\r\n\r\nArduino BM2 monitor v1.0\r\n"));
+  ////Serial.print(F("Running on "));
 #if defined(__AVR_ATmega2560__)
-  Serial.print(F("2560 Arduino MEGA\r\n"));
+  ////Serial.print(F("2560 Arduino MEGA\r\n"));
 #elif defined(__AVR_ATmega328P__)
-  Serial.print(F("ATmega328P Arduino UNO\r\n"));
+  ////Serial.print(F("ATmega328P Arduino UNO\r\n"));
 #elif defined(ARDUINO_SAM_DUE)
-  Serial.print(F("Arduino Due\r\n"));
+  ////Serial.print(F("Arduino Due\r\n"));
 #else
-  Serial.print(F("** unknown arduino board **\r\n"));
+  ////Serial.print(F("** unknown arduino board **\r\n"));
 #endif
-  Serial.print(F("Type '?' for help\r\n"));
-  Serial.print(F("\r\n\r\n"));
-  Cmd_help(0, 0);
-  CmdShowPrompt();
+  ////Serial.print(F("Type '?' for help\r\n"));
+  ////Serial.print(F("\r\n\r\n"));
+  // Cmd_help(0, 0);
+  // CmdShowPrompt();
   delay(10000);
   time_count = millis();
 }
@@ -118,7 +119,7 @@ void loop()
   {
     time_count = millis();
     print_data();
-    Serial2.println();
+    Serial.println();
   }
   // process serial events
   Uart0Handler();
@@ -140,6 +141,7 @@ int cmd_func(int argc, char *argv[])
   }
   else
   {
+
     switch (atoi(argv[1]))
     {
       case 14:
@@ -218,7 +220,7 @@ int cmd_nvm(int argc, char *argv[])
         break;
       default:
         Serial.println("Wrong Parameter, u to Unlock, w to Write, d to Debug and s to Sleep");
-        return (0);
+        return 0;
         break;
     }
   }
@@ -376,7 +378,7 @@ int cmd_debug(int argc, char *argv[])
       case 'd':
         if ( (strcmp(argv[2], "0x0001") == 0) || (strcmp(argv[2], "0x0002") == 0) || (strcmp(argv[2], "0x0004") == 0) || (strcmp(argv[2], "0x0008") == 0) || (strcmp(argv[2], "0x0010") == 0) )
         {
-          sprintf(tm_cmd, "%s %s, %s", BM_DEUBG, argv[1], argv[2]);
+          sprintf(tm_cmd, "%s DISable, %s", BM_DEUBG, argv[2]);
           Serial.print("Command to send = ");
           Serial.println(tm_cmd);
           sendCMD(tm_cmd);
@@ -394,7 +396,7 @@ int cmd_debug(int argc, char *argv[])
       case 'n':
         if ( (strcmp(argv[2], "0x0001") == 0) || (strcmp(argv[2], "0x0002") == 0) || (strcmp(argv[2], "0x0004") == 0) || (strcmp(argv[2], "0x0008") == 0) || (strcmp(argv[2], "0x0010") == 0) )
         {
-          sprintf(tm_cmd, "%s %s, %s", BM_DEUBG, argv[1], argv[2]);
+          sprintf(tm_cmd, "%s ENable, %s", BM_DEUBG, argv[2]);
           Serial.print("Command to send = ");
           Serial.println(tm_cmd);
           sendCMD(tm_cmd);
@@ -470,8 +472,8 @@ int cmd_reset(int argc, char *argv[])
 
 void readTM(int cmd)
 {
-  Serial.print("TM = ");
-  Serial.println(cmd);
+  //Serial.print("TM = ");
+  //Serial.println(cmd);
 
   char aux[50];
   int byte2read;
@@ -550,8 +552,8 @@ void readTM(int cmd)
       return ;
       break;
   }
-  Serial.print("byte2read = ");
-  Serial.println(byte2read);
+  //Serial.print("byte2read = ");
+  //Serial.println(byte2read);
   Wire.requestFrom(BM2_ADDR, byte2read);
   delay(I2C_RW_DELAY);
   int i = 0;
@@ -562,10 +564,16 @@ void readTM(int cmd)
   }
   for (i = 0; i < byte2read; i++)
   {
-    Serial.write(aux[i]);
-    Serial2.write(aux[i]);
+    Serial.print(aux[i]);
   }
-  Serial.println();
+  //Serial.println();
+//  for (i = 0; i < byte2read; i++)
+//  {
+//    Serial.print(aux[i], HEX);
+//    Serial.print(" ");
+//  }
+//  Serial.println();
+  memset(aux, 0, sizeof(aux));
 }
 
 void sendCMD(char* CMD)
@@ -628,6 +636,7 @@ int cmd_tm(int argc, char *argv[])
       case 51:
       case 52:
       case 53:
+      case 54:
       case 55:
       case 56:
       case 57:
@@ -643,6 +652,7 @@ int cmd_tm(int argc, char *argv[])
       case 77:
       case 78:
       case 84:
+      case 90:
       case 93:
       case 114:
       case 115:
@@ -670,6 +680,12 @@ int cmd_tm(int argc, char *argv[])
         sprintf(tm_cmd, "%s %s,%s\n", BM_TEL, argv[1], param);
         Serial.print("Command to send = ");
         Serial.println(tm_cmd);
+        for (int i = 0; i <= 20; i++)
+        {
+          Serial.print(tm_cmd[i], HEX);
+          Serial.print(" ");
+        }
+        Serial.println();
         sendCMD(tm_cmd);
         delay(I2C_RW_DELAY);
         readTM(atoi(argv[1]));
@@ -753,145 +769,145 @@ void CmdShowStatus(int Status)
     Serial.print("\r\n");
   }
 }
-
 void print_data()
 {
-  Serial2.print("DATA,TIME,");
-  sprintf(tm_cmd, "BM:TEL? 8,DATA\n");
+  Serial.print("DATA,TIME,");
+  sprintf(tm_cmd, "BM:TEL? 8,ASCII\n");
   sendCMD(tm_cmd);
   delay(I2C_RW_DELAY);
-  readTM(8);
-  Serial2.print(",");
-  sprintf(tm_cmd, "BM:TEL? 9,DATA\n");
-  sendCMD(tm_cmd);
-  delay(I2C_RW_DELAY);
-  readTM(9);
-  Serial2.print(",");
-  sprintf(tm_cmd, "BM:TEL? 10,DATA\n");
-  sendCMD(tm_cmd);
-  delay(I2C_RW_DELAY);
-  readTM(10);
-  Serial2.print(",");
-  sprintf(tm_cmd, "BM:TEL? 11,DATA\n");
-  sendCMD(tm_cmd);
-  delay(I2C_RW_DELAY);
-  readTM(11);
-  Serial2.print(",");
-  sprintf(tm_cmd, "BM:TEL? 18,DATA\n");
-  sendCMD(tm_cmd);
-  delay(I2C_RW_DELAY);
-  readTM(18);
-  Serial2.print(",");
-  sprintf(tm_cmd, "BM:TEL? 19,DATA\n");
-  sendCMD(tm_cmd);
-  delay(I2C_RW_DELAY);
-  readTM(19);
-  Serial2.print(",");
-  sprintf(tm_cmd, "BM:TEL? 20,DATA\n");
-  sendCMD(tm_cmd);
-  delay(I2C_RW_DELAY);
-  readTM(20);
-  Serial2.print(",");
-  sprintf(tm_cmd, "BM:TEL? 21,DATA\n");
-  sendCMD(tm_cmd);
-  delay(I2C_RW_DELAY);
-  readTM(21);
-  Serial2.print(",");
-  sprintf(tm_cmd, "BM:TEL? 23,DATA\n");
-  sendCMD(tm_cmd);
-  delay(I2C_RW_DELAY);
-  readTM(23);
-  Serial2.print(",");
-  sprintf(tm_cmd, "BM:TEL? 33,DATA\n");
-  sendCMD(tm_cmd);
-  delay(I2C_RW_DELAY);
-  readTM(33);
-  Serial2.print(",");
-  sprintf(tm_cmd, "BM:TEL? 34,DATA\n");
-  sendCMD(tm_cmd);
-  delay(I2C_RW_DELAY);
-  readTM(34);
-  Serial2.print(",");
-  sprintf(tm_cmd, "BM:TEL? 36,DATA\n");
-  sendCMD(tm_cmd);
-  delay(I2C_RW_DELAY);
-  readTM(36);
-  Serial2.print(",");
-  sprintf(tm_cmd, "BM:TEL? 48,DATA\n");
-  sendCMD(tm_cmd);
-  delay(I2C_RW_DELAY);
-  readTM(48);
-  Serial2.print(",");
-  sprintf(tm_cmd, "BM:TEL? 49,DATA\n");
-  sendCMD(tm_cmd);
-  delay(I2C_RW_DELAY);
-  readTM(49);
-  Serial2.print(",");
-  sprintf(tm_cmd, "BM:TEL? 50,DATA\n");
-  sendCMD(tm_cmd);
-  delay(I2C_RW_DELAY);
-  readTM(50);
-  Serial2.print(",");
-  sprintf(tm_cmd, "BM:TEL? 51,DATA\n");
-  sendCMD(tm_cmd);
-  delay(I2C_RW_DELAY);
-  readTM(51);
-  Serial2.print(",");
-  sprintf(tm_cmd, "BM:TEL? 71,DATA\n");
-  sendCMD(tm_cmd);
-  delay(I2C_RW_DELAY);
-  readTM(71);
-  Serial2.print(",");
-  sprintf(tm_cmd, "BM:TEL? 72,DATA\n");
-  sendCMD(tm_cmd);
-  delay(I2C_RW_DELAY);
-  readTM(72);
-  Serial2.print(",");
-  sprintf(tm_cmd, "BM:TEL? 73,DATA\n");
-  sendCMD(tm_cmd);
-  delay(I2C_RW_DELAY);
-  readTM(73);
-  Serial2.print(",");
-  sprintf(tm_cmd, "BM:TEL? 74,DATA\n");
-  sendCMD(tm_cmd);
-  delay(I2C_RW_DELAY);
-  readTM(74);
-  Serial2.print(",");
-  sprintf(tm_cmd, "BM:TEL? 63,DATA\n");
-  sendCMD(tm_cmd);
-  delay(I2C_RW_DELAY);
-  readTM(63);
-  Serial2.print(",");
-  sprintf(tm_cmd, "BM:TEL? 62,DATA\n");
-  sendCMD(tm_cmd);
-  delay(I2C_RW_DELAY);
-  readTM(62);
-  Serial2.print(",");
-  sprintf(tm_cmd, "BM:TEL? 61,DATA\n");
-  sendCMD(tm_cmd);
-  delay(I2C_RW_DELAY);
-  readTM(61);
-  Serial2.print(",");
-  sprintf(tm_cmd, "BM:TEL? 60,DATA\n");
-  sendCMD(tm_cmd);
-  delay(I2C_RW_DELAY);
-  readTM(60);
-  Serial2.print(",");
-  sprintf(tm_cmd, "BM:TEL? 90,DATA\n");
-  sendCMD(tm_cmd);
-  delay(I2C_RW_DELAY);
-  readTM(90);
-  Serial2.print(",");
-  sprintf(tm_cmd, "BM:TEL? 93,DATA\n");
-  sendCMD(tm_cmd);
-  delay(I2C_RW_DELAY);
-  readTM(93);
-  Serial2.print(",");
-  sprintf(tm_cmd, "BM:TEL? 115,DATA\n");
-  sendCMD(tm_cmd);
-  delay(I2C_RW_DELAY);
-  readTM(115);
+   readTM(8);
+   //Serial.println(",");
+    Serial.print(",");
+    sprintf(tm_cmd, "BM:TEL? 9,ASCII\n");
+    sendCMD(tm_cmd);
+    delay(I2C_RW_DELAY);
+    readTM(9);
+    Serial.print(",");
+    sprintf(tm_cmd, "BM:TEL? 10,ASCII\n");
+    sendCMD(tm_cmd);
+    delay(I2C_RW_DELAY);
+    readTM(10);
+    Serial.print(",");
+    sprintf(tm_cmd, "BM:TEL? 11,ASCII\n");
+    sendCMD(tm_cmd);
+    delay(I2C_RW_DELAY);
+    readTM(11);
+    Serial.print(",");
+    sprintf(tm_cmd, "BM:TEL? 18,ASCII\n");
+    sendCMD(tm_cmd);
+    delay(I2C_RW_DELAY);
+    readTM(18);
+    Serial.print(",");
+    sprintf(tm_cmd, "BM:TEL? 19,ASCII\n");
+    sendCMD(tm_cmd);
+    delay(I2C_RW_DELAY);
+    readTM(19);
+    Serial.print(",");
+    sprintf(tm_cmd, "BM:TEL? 20,ASCII\n");
+    sendCMD(tm_cmd);
+    delay(I2C_RW_DELAY);
+    readTM(20);
+    Serial.print(",");
+    sprintf(tm_cmd, "BM:TEL? 21,ASCII\n");
+    sendCMD(tm_cmd);
+    delay(I2C_RW_DELAY);
+    readTM(21);
+    Serial.print(",");
+    sprintf(tm_cmd, "BM:TEL? 23,ASCII\n");
+    sendCMD(tm_cmd);
+    delay(I2C_RW_DELAY);
+    readTM(23);
+    Serial.print(",");
+    sprintf(tm_cmd, "BM:TEL? 33,ASCII\n");
+    sendCMD(tm_cmd);
+    delay(I2C_RW_DELAY);
+    readTM(33);
+    Serial.print(",");
+    sprintf(tm_cmd, "BM:TEL? 34,ASCII\n");
+    sendCMD(tm_cmd);
+    delay(I2C_RW_DELAY);
+    readTM(34);
+    Serial.print(",");
+    sprintf(tm_cmd, "BM:TEL? 36,ASCII\n");
+    sendCMD(tm_cmd);
+    delay(I2C_RW_DELAY);
+    readTM(36);
+    Serial.print(",");
+    sprintf(tm_cmd, "BM:TEL? 48,ASCII\n");
+    sendCMD(tm_cmd);
+    delay(I2C_RW_DELAY);
+    readTM(48);
+    Serial.print(",");
+    sprintf(tm_cmd, "BM:TEL? 49,ASCII\n");
+    sendCMD(tm_cmd);
+    delay(I2C_RW_DELAY);
+    readTM(49);
+    Serial.print(",");
+    sprintf(tm_cmd, "BM:TEL? 50,ASCII\n");
+    sendCMD(tm_cmd);
+    delay(I2C_RW_DELAY);
+    readTM(50);
+    Serial.print(",");
+    sprintf(tm_cmd, "BM:TEL? 51,ASCII\n");
+    sendCMD(tm_cmd);
+    delay(I2C_RW_DELAY);
+    readTM(51);
+    Serial.print(",");
+    sprintf(tm_cmd, "BM:TEL? 71,ASCII\n");
+    sendCMD(tm_cmd);
+    delay(I2C_RW_DELAY);
+    readTM(71);
+    Serial.print(",");
+    sprintf(tm_cmd, "BM:TEL? 72,ASCII\n");
+    sendCMD(tm_cmd);
+    delay(I2C_RW_DELAY);
+    readTM(72);
+    Serial.print(",");
+    sprintf(tm_cmd, "BM:TEL? 73,ASCII\n");
+    sendCMD(tm_cmd);
+    delay(I2C_RW_DELAY);
+    readTM(73);
+    Serial.print(",");
+    sprintf(tm_cmd, "BM:TEL? 74,ASCII\n");
+    sendCMD(tm_cmd);
+    delay(I2C_RW_DELAY);
+    readTM(74);
+    Serial.print(",");
+    sprintf(tm_cmd, "BM:TEL? 63,ASCII\n");
+    sendCMD(tm_cmd);
+    delay(I2C_RW_DELAY);
+    readTM(63);
+    Serial.print(",");
+    sprintf(tm_cmd, "BM:TEL? 62,ASCII\n");
+    sendCMD(tm_cmd);
+    delay(I2C_RW_DELAY);
+    readTM(62);
+    Serial.print(",");
+    sprintf(tm_cmd, "BM:TEL? 61,ASCII\n");
+    sendCMD(tm_cmd);
+    delay(I2C_RW_DELAY);
+    readTM(61);
+    Serial.print(",");
+    sprintf(tm_cmd, "BM:TEL? 60,ASCII\n");
+    sendCMD(tm_cmd);
+    delay(I2C_RW_DELAY);
+    readTM(60);
+    Serial.print(",");
+    sprintf(tm_cmd, "BM:TEL? 90,ASCII\n");
+    sendCMD(tm_cmd);
+    delay(I2C_RW_DELAY);
+    readTM(90);
+    Serial.print(",");
+    sprintf(tm_cmd, "BM:TEL? 93,ASCII\n");
+    sendCMD(tm_cmd);
+    delay(I2C_RW_DELAY);
+    readTM(93);
+    Serial.print(",");
+    sprintf(tm_cmd, "BM:TEL? 115,ASCII\n");
+    sendCMD(tm_cmd);
+    delay(I2C_RW_DELAY);
+    readTM(115);
 
-  
+
 
 }

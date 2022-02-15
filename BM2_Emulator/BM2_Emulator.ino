@@ -36,28 +36,28 @@ void loop()
   if (flagRX)
   {
     /*respTM[1] = (tempo >> 24) & 0xFF;
-    respTM[2] = (tempo >> 16) & 0xFF;
-    respTM[3] = (tempo >> 8) & 0xFF;
-    respTM[4] = (tempo) & 0xFF;
-    // sprintf(debug_print, "%d -> 0x%.8X", millis(), tempo);
-    //Serial.println(debug_print);
+      respTM[2] = (tempo >> 16) & 0xFF;
+      respTM[3] = (tempo >> 8) & 0xFF;
+      respTM[4] = (tempo) & 0xFF;
+      // sprintf(debug_print, "%d -> 0x%.8X", millis(), tempo);
+      //Serial.println(debug_print);
     */
 
     //ex: BM:TEL? 9,DATA
     snprintf(buf, sizeof(buf), "%.*s", current_len - 14, &receiveTC[8]);
-    sprintf(debug_print, "buf =  %s", buf);
+    sprintf(debug_print, "\nbuf =  %s", buf);
     Serial.println(debug_print);
     tc = atoi(buf);
     sprintf(debug_print, "TC =  %d", tc);
     Serial.println(debug_print);
     //  tempo_delay += millis();
 
-       for (int i = 0 ; i < 10 ; i++)
-    {
-      sprintf(debug_print, "0x%.2X ", respTM[i]);
-      Serial.print(debug_print);
-    }
-    Serial.println();
+//    for (int i = 0 ; i < 10 ; i++)
+//    {
+//      sprintf(debug_print, "0x%.2X ", respTM[i]);
+//      Serial.print(debug_print);
+//    }
+//    Serial.println();
     tempo = (millis() / 1000);
     flagRX = false;
   }
@@ -67,25 +67,26 @@ void loop()
 void receiveEvent(int howMany)
 {
 
-  sprintf(debug_print, "TC Received - length = %d", howMany);
+  sprintf(debug_print, "TC Received -> length = %d", howMany);
   Serial.println(debug_print);
   current_len = howMany;
   int k = 0;
-  
+
   while (Wire.available()) // loop through all but the last
   {
     receiveTC[k] = Wire.read();
-    k++;
+    
 
     //    uint8_t c = Wire.read(); // receive byte as a character
     //
-//        Serial.print("0x");
-//        Serial.print(c, HEX);        // print the HEX
-//        Serial.print(" ");
+//            Serial.print("0x");
+//            Serial.print(receiveTC[k], HEX);        // print the HEX
+//            Serial.print(" ");
 
 
     //    Serial.write(c);        // print the character
     //    Serial.println();
+    k++;
     if (k == howMany)
       flagRX = true;
   }
@@ -93,47 +94,47 @@ void receiveEvent(int howMany)
 
 }
 
-uint8_t tm8[20] = {0X1 ,0X6D ,0X24 ,0X0 ,0X0 ,0X8E ,0XB ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0};
+uint8_t tm8[20] = {0X1 , 0X6D , 0X24 , 0X0 , 0X0 , 0X8E , 0XB , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0};
 uint8_t tm9[20] = {0x0 , 0xB2 , 0x78 , 0x0 , 0x0 , 0xA7 , 0x1B , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0};
-uint8_t tm10[20] = {0X1 ,0X46 ,0X6F ,0X0 ,0X0 ,0XCE ,0XFF ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0};
-uint8_t tm11[20] = {0X1 ,0XFF ,0X7F ,0X0 ,0X0 ,0XCD ,0XFF ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0};
-uint8_t tm13[19] = {0X1 ,0X71 ,0X87 ,0X0 ,0X0 ,0X16 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0};
-uint8_t tm14[19] = {0X1 ,0XEC ,0X98 ,0X0 ,0X0 ,0X14 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0};
-uint8_t tm15[20] = {0X1 ,0X95 ,0XA0 ,0X0 ,0X0 ,0X94 ,0X5 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0};
-uint8_t tm17[20] = {0X1 ,0X79 ,0XB4 ,0X0 ,0X0 ,0X4A ,0X9 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0};
-uint8_t tm18[20] = {0X1 ,0X2F ,0XBC ,0X0 ,0X0 ,0X4A ,0X9 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0};
-uint8_t tm19[20] = {0X1 ,0X32 ,0XCF ,0X0 ,0X0 ,0XFF ,0XFF ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0};
-uint8_t tm20[20] = {0X1 ,0XC7 ,0XDE ,0X0 ,0X0 ,0X88 ,0X13 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0};
-uint8_t tm21[20] = {0X1 ,0X7C ,0XED ,0X0 ,0X0 ,0XD0 ,0X20 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0};
-uint8_t tm23[20] = {0X1 ,0XD5 ,0X14 ,0X1 ,0X0 ,0X3 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0};
-uint8_t tm33[20] = {0X1 ,0X9F ,0X9C ,0X1 ,0X0 ,0X20 ,0X4E ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0};
-uint8_t tm34[20] = {0X1 ,0X72 ,0XA3 ,0X1 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0};
-uint8_t tm36[19] = {0X1 ,0X57 ,0XB0 ,0X1 ,0X0 ,0X2D ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0};
-uint8_t tm37[20] = {0X1 ,0X8 ,0XB6 ,0X1 ,0X0 ,0XB6 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0};
+uint8_t tm10[20] = {0X1 , 0X46 , 0X6F , 0X0 , 0X0 , 0XCE , 0XFF , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0};
+uint8_t tm11[20] = {0X1 , 0XFF , 0X7F , 0X0 , 0X0 , 0XCD , 0XFF , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0};
+uint8_t tm13[19] = {0X1 , 0X71 , 0X87 , 0X0 , 0X0 , 0X16 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0};
+uint8_t tm14[19] = {0X1 , 0XEC , 0X98 , 0X0 , 0X0 , 0X14 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0};
+uint8_t tm15[20] = {0X1 , 0X95 , 0XA0 , 0X0 , 0X0 , 0X94 , 0X5 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0};
+uint8_t tm17[20] = {0X1 , 0X79 , 0XB4 , 0X0 , 0X0 , 0X4A , 0X9 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0};
+uint8_t tm18[20] = {0X1 , 0X2F , 0XBC , 0X0 , 0X0 , 0X4A , 0X9 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0};
+uint8_t tm19[20] = {0X1 , 0X32 , 0XCF , 0X0 , 0X0 , 0XFF , 0XFF , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0};
+uint8_t tm20[20] = {0X1 , 0XC7 , 0XDE , 0X0 , 0X0 , 0X88 , 0X13 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0};
+uint8_t tm21[20] = {0X1 , 0X7C , 0XED , 0X0 , 0X0 , 0XD0 , 0X20 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0};
+uint8_t tm23[20] = {0X1 , 0XD5 , 0X14 , 0X1 , 0X0 , 0X3 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0};
+uint8_t tm33[20] = {0X1 , 0X9F , 0X9C , 0X1 , 0X0 , 0X20 , 0X4E , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0};
+uint8_t tm34[20] = {0X1 , 0X72 , 0XA3 , 0X1 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0};
+uint8_t tm36[19] = {0X1 , 0X57 , 0XB0 , 0X1 , 0X0 , 0X2D , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0};
+uint8_t tm37[20] = {0X1 , 0X8 , 0XB6 , 0X1 , 0X0 , 0XB6 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0};
 uint8_t tm48[20] = {0X1, 0XD5, 0XCB, 0X1, 0X0, 0X8B, 0XB, 0X0, 0X0, 0X0, 0X0, 0X0, 0X0, 0X0, 0X0, 0X0, 0X0, 0X0, 0X0, 0X0};
-uint8_t tm49[20] = {0X1 ,0X7B ,0XD1 ,0X1 ,0X0 ,0X8A ,0XB ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0};
-uint8_t tm50[20] = {0X1 ,0XE3 ,0XD5 ,0X1 ,0X0 ,0X96 ,0XB ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0};
-uint8_t tm51[20] = {0X1 ,0XD ,0XE6 ,0X1 ,0X0 ,0X92 ,0XB ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0};
-uint8_t tm60[20] = {0X1 ,0X8 ,0X45 ,0X2 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0};
-uint8_t tm61[20] = {0X1 ,0X1B ,0X4B ,0X2 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0};
-uint8_t tm62[20] = {0X1 ,0XEE ,0X4E ,0X2 ,0X0 ,0XEA ,0XD ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0};
-uint8_t tm63[20] = {0X1 ,0XD9 ,0X54 ,0X2 ,0X0 ,0XC2 ,0XD ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0};
-uint8_t tm71[20] = {0X1 ,0X70 ,0X5D ,0X2 ,0X0 ,0X94 ,0XB ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0};
-uint8_t tm72[20] = {0X1 ,0X92 ,0X63 ,0X2 ,0X0 ,0X92 ,0XB ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0};
-uint8_t tm73[20] = {0X1 ,0X89 ,0X6A ,0X2 ,0X0 ,0X91 ,0XB ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0};
-uint8_t tm74[20] = {0X1 ,0X6B ,0X70 ,0X2 ,0X0 ,0X94 ,0XB ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0};
-uint8_t tm77[19] = {0X1 ,0X68 ,0X75 ,0X2 ,0X0 ,0X2 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0};
-uint8_t tm90[20] = {0X1 ,0X20 ,0XA6 ,0X2 ,0X0 ,0X10 ,0X8 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0};
-uint8_t tm93[20] = {0XA9 ,0XAC ,0X2 ,0X0 ,0XA9 ,0X1B ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0};
-uint8_t tm115[20] = {0X1 ,0XCA ,0XBA ,0X2 ,0X0 ,0XA ,0XB ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0 ,0X0};
+uint8_t tm49[20] = {0X1 , 0X7B , 0XD1 , 0X1 , 0X0 , 0X8A , 0XB , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0};
+uint8_t tm50[20] = {0X1 , 0XE3 , 0XD5 , 0X1 , 0X0 , 0X96 , 0XB , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0};
+uint8_t tm51[20] = {0X1 , 0XD , 0XE6 , 0X1 , 0X0 , 0X92 , 0XB , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0};
+uint8_t tm60[20] = {0X1 , 0X8 , 0X45 , 0X2 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0};
+uint8_t tm61[20] = {0X1 , 0X1B , 0X4B , 0X2 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0};
+uint8_t tm62[20] = {0X1 , 0XEE , 0X4E , 0X2 , 0X0 , 0XEA , 0XD , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0};
+uint8_t tm63[20] = {0X1 , 0XD9 , 0X54 , 0X2 , 0X0 , 0XC2 , 0XD , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0};
+uint8_t tm71[20] = {0X1 , 0X70 , 0X5D , 0X2 , 0X0 , 0X94 , 0XB , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0};
+uint8_t tm72[20] = {0X1 , 0X92 , 0X63 , 0X2 , 0X0 , 0X92 , 0XB , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0};
+uint8_t tm73[20] = {0X1 , 0X89 , 0X6A , 0X2 , 0X0 , 0X91 , 0XB , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0};
+uint8_t tm74[20] = {0X1 , 0X6B , 0X70 , 0X2 , 0X0 , 0X94 , 0XB , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0};
+uint8_t tm77[19] = {0X1 , 0X68 , 0X75 , 0X2 , 0X0 , 0X2 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0};
+uint8_t tm90[20] = {0X1 , 0X20 , 0XA6 , 0X2 , 0X0 , 0X10 , 0X8 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0};
+uint8_t tm93[20] = {0XA9 , 0XAC , 0X2 , 0X0 , 0XA9 , 0X1B , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0};
+uint8_t tm115[20] = {0X1 , 0XCA , 0XBA , 0X2 , 0X0 , 0XA , 0XB , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0};
 
 
 void requestEvent()
 {
   Serial.println("Sending Request");
-  sprintf(debug_print, "TC =  %d", tc);
-  Serial.println(debug_print);
-  
+//  sprintf(debug_print, "TC =  %d", tc);
+//  Serial.println(debug_print);
+
   //Wire.write('x');
   switch (tc)
   {

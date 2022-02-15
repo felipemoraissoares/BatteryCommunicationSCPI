@@ -541,9 +541,9 @@ void readTM(int cmd, char* param)
   while (Wire.available())
   {
     aux[i] = Wire.read();
-    if (aux[i] == '\0')
-      byte2read = i;
-    else
+//    if (aux[i] == '\0')
+//      byte2read = i;
+//    else
       i++;
   }
 //  for (int j = 0; j < byte2read; j++)

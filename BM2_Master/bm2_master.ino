@@ -216,21 +216,21 @@ int cmd_heat(int argc, char *argv[])
   {
     if (strcmp(argv[1], "on") == 0)
     {
-      sprintf(tm_cmd, "%s ON", BM_HEAT);
+      sprintf(tm_cmd, "%s ON\n", BM_HEAT);
       Serial.print("Command to send = ");
       Serial.println(tm_cmd);
       sendCMD(tm_cmd);
     }
     else if (strcmp(argv[1], "off") == 0)
     {
-      sprintf(tm_cmd, "%s OFF", BM_HEAT);
+      sprintf(tm_cmd, "%s OFF\n", BM_HEAT);
       Serial.print("Command to send = ");
       Serial.println(tm_cmd);
       sendCMD(tm_cmd);
     }
     else if (strcmp(argv[1], "auto") == 0)
     {
-      sprintf(tm_cmd, "%s AUTO", BM_HEAT);
+      sprintf(tm_cmd, "%s AUTO\n", BM_HEAT);
       Serial.print("Command to send = ");
       Serial.println(tm_cmd);
       sendCMD(tm_cmd);
@@ -250,14 +250,14 @@ int cmd_sleep(int argc, char *argv[])
   {
     if (strcmp(argv[1], "stop") == 0)
     {
-      sprintf(tm_cmd, "%s STOP", BM_SLEEP);
+      sprintf(tm_cmd, "%s STOP\n", BM_SLEEP);
       Serial.print("Command to send = ");
       Serial.println(tm_cmd);
       sendCMD(tm_cmd);
     }
     else if (strcmp(argv[1], "abort") == 0)
     {
-      sprintf(tm_cmd, "%s ABORT", BM_SLEEP);
+      sprintf(tm_cmd, "%s ABORT\n", BM_SLEEP);
       Serial.print("Command to send = ");
       Serial.println(tm_cmd);
       sendCMD(tm_cmd);
@@ -280,7 +280,7 @@ int cmd_sleep(int argc, char *argv[])
       }
       else
       {
-        sprintf(tm_cmd, "%s FOR, %s ", BM_SLEEP, argv[2]);
+        sprintf(tm_cmd, "%s FOR, %s\n", BM_SLEEP, argv[2]);
         Serial.print("Command to send = ");
         Serial.println(tm_cmd);
         sendCMD(tm_cmd);
@@ -307,21 +307,21 @@ int cmd_balance(int argc, char *argv[])
   {
     if (strcmp(argv[1], "on") == 0)
     {
-      sprintf(tm_cmd, "%s ON", BM_BALANCE);
+      sprintf(tm_cmd, "%s ON\n", BM_BALANCE);
       Serial.print("Command to send = ");
       Serial.println(tm_cmd);
       sendCMD(tm_cmd);
     }
     else if (strcmp(argv[1], "off") == 0)
     {
-      sprintf(tm_cmd, "%s OFF", BM_BALANCE);
+      sprintf(tm_cmd, "%s OFF\n", BM_BALANCE);
       Serial.print("Command to send = ");
       Serial.println(tm_cmd);
       sendCMD(tm_cmd);
     }
     else if (strcmp(argv[1], "auto") == 0)
     {
-      sprintf(tm_cmd, "%s AUTO", BM_BALANCE);
+      sprintf(tm_cmd, "%s AUTO\n", BM_BALANCE);
       Serial.print("Command to send = ");
       Serial.println(tm_cmd);
       sendCMD(tm_cmd);
@@ -403,14 +403,14 @@ int cmd_pf(int argc, char *argv[])
   {
     if (strcmp(argv[1], "on") == 0)
     {
-      sprintf(tm_cmd, "%s ON", BM_PFIN);
+      sprintf(tm_cmd, "%s ON\n", BM_PFIN);
       Serial.print("Command to send = ");
       Serial.println(tm_cmd);
       sendCMD(tm_cmd);
     }
     else if (strcmp(argv[1], "off") == 0)
     {
-      sprintf(tm_cmd, "%s OFF", BM_PFIN);
+      sprintf(tm_cmd, "%s OFF\n", BM_PFIN);
       Serial.print("Command to send = ");
       Serial.println(tm_cmd);
       sendCMD(tm_cmd);
@@ -434,7 +434,7 @@ int cmd_reset(int argc, char *argv[])
   }
   else
   {
-    sprintf(tm_cmd, "%s BQ", BM_RESET);
+    sprintf(tm_cmd, "%s BQ\n", BM_RESET);
     Serial.print("Command to send = ");
     Serial.println(tm_cmd);
     sendCMD(tm_cmd);
@@ -558,6 +558,11 @@ void readTM(int cmd, char* param)
     Serial.print("0x");
     Serial.print(aux[i], HEX);
     Serial.print(" ");
+  }
+  Serial.println();
+  for (i = 0; i < byte2read; i++)
+  {
+    Serial.print(aux[i]);
   }
   Serial.println();
   memset(aux, 0, sizeof(aux));

@@ -83,7 +83,8 @@ void setup()
     Serial.print("Cell Temp1[0.1K],Cell Temp2[0.1K],Cell Temp3[0.1K],Cell Temp4[0.1K],");
     Serial.print("Cell Temp5[0.1K],Cell Temp6[0.1K],Cell Temp7[0.1K],Cell Temp8[0.1K],");
     Serial.print("Cell Volt1[mV],Cell Volt2[mV],Cell Volt3[mV],Cell Volt4[mV],");
-    Serial.println("Pack Volt[mV],AVG Volt[mV], Board Temp[0.1K],");
+    Serial.print("Pack Volt[mV],AVG Volt[mV], Board Temp[0.1K],Relative State Of Charge [%],Absolute State Of Charge [%],");
+    Serial.println("Remaining Capacity [10mWh],Run Time To Empty [min],");
     // Serial.print("");
   Wire.begin();
   Wire.setClock(I2C_BAUDRATE);
@@ -103,7 +104,7 @@ void setup()
   ////Serial.print(F("\r\n\r\n"));
   // Cmd_help(0, 0);
   // CmdShowPrompt();
-  delay(10000);
+  //delay(10000);
   time_count = millis();
 }
 
@@ -115,11 +116,17 @@ void setup()
 void loop()
 {
   linha++;
-  if (millis() - time_count > 5000)
+  if (millis() - time_count > 30000)
   {
     time_count = millis();
     print_data();
     Serial.println();
+    Serial.print("DATA,TIME,");
+    sprintf(tm_cmd, "%s BQ\n", BM_RESET);
+    sendCMD(tm_cmd);
+    Serial.print("RESET COMMAND,");
+    Serial.println(tm_cmd);
+    delay(20000);
   }
   // process serial events
   Uart0Handler();
@@ -185,13 +192,13 @@ int cmd_nvm(int argc, char *argv[])
     switch (argv[1][0])
     {
       case 'u':
-        sprintf(tm_cmd, "%s UNLOCK, 12345", BM_NVM);
+        sprintf(tm_cmd, "%s UNLOCK, 12345\n", BM_NVM);
         Serial.print("Command to send = ");
         Serial.println(tm_cmd);
         sendCMD(tm_cmd);
         break;
       case 'w':
-        sprintf(tm_cmd, "%s WRITE, 1", BM_NVM);
+        sprintf(tm_cmd, "%s WRITE, 1\n", BM_NVM);
         Serial.print("Command to send = ");
         Serial.println(tm_cmd);
         sendCMD(tm_cmd);
@@ -207,13 +214,13 @@ int cmd_nvm(int argc, char *argv[])
     switch (argv[1][0])
     {
       case 'd':
-        sprintf(tm_cmd, "%s DEBUG,%s", BM_NVM, argv[2]); //Check what is scale_factor
+        sprintf(tm_cmd, "%s DEBUG,%s\n", BM_NVM, argv[2]); //Check what is scale_factor
         Serial.print("Command to send = ");
         Serial.println(tm_cmd);
         sendCMD(tm_cmd);
         break;
       case 's':
-        sprintf(tm_cmd, "%s SLEEP_SF,%s", BM_NVM, argv[2]); //Check what is scale_factor
+        sprintf(tm_cmd, "%s SLEEP_SF,%s\n", BM_NVM, argv[2]); //Check what is scale_factor
         Serial.print("Command to send = ");
         Serial.println(tm_cmd);
         sendCMD(tm_cmd);
@@ -244,21 +251,21 @@ int cmd_heat(int argc, char *argv[])
   {
     if (strcmp(argv[1], "on") == 0)
     {
-      sprintf(tm_cmd, "%s ON", BM_HEAT);
+      sprintf(tm_cmd, "%s ON\n", BM_HEAT);
       Serial.print("Command to send = ");
       Serial.println(tm_cmd);
       sendCMD(tm_cmd);
     }
     else if (strcmp(argv[1], "off") == 0)
     {
-      sprintf(tm_cmd, "%s OFF", BM_HEAT);
+      sprintf(tm_cmd, "%s OFF\n", BM_HEAT);
       Serial.print("Command to send = ");
       Serial.println(tm_cmd);
       sendCMD(tm_cmd);
     }
     else if (strcmp(argv[1], "auto") == 0)
     {
-      sprintf(tm_cmd, "%s AUTO", BM_HEAT);
+      sprintf(tm_cmd, "%s AUTO\n", BM_HEAT);
       Serial.print("Command to send = ");
       Serial.println(tm_cmd);
       sendCMD(tm_cmd);
@@ -278,14 +285,14 @@ int cmd_sleep(int argc, char *argv[])
   {
     if (strcmp(argv[1], "stop") == 0)
     {
-      sprintf(tm_cmd, "%s STOP", BM_SLEEP);
+      sprintf(tm_cmd, "%s STOP\n", BM_SLEEP);
       Serial.print("Command to send = ");
       Serial.println(tm_cmd);
       sendCMD(tm_cmd);
     }
     else if (strcmp(argv[1], "abort") == 0)
     {
-      sprintf(tm_cmd, "%s ABORT", BM_SLEEP);
+      sprintf(tm_cmd, "%s ABORT\n", BM_SLEEP);
       Serial.print("Command to send = ");
       Serial.println(tm_cmd);
       sendCMD(tm_cmd);
@@ -308,7 +315,7 @@ int cmd_sleep(int argc, char *argv[])
       }
       else
       {
-        sprintf(tm_cmd, "%s FOR, %s ", BM_SLEEP, argv[2]);
+        sprintf(tm_cmd, "%s FOR, %s\n", BM_SLEEP, argv[2]);
         Serial.print("Command to send = ");
         Serial.println(tm_cmd);
         sendCMD(tm_cmd);
@@ -335,21 +342,21 @@ int cmd_balance(int argc, char *argv[])
   {
     if (strcmp(argv[1], "on") == 0)
     {
-      sprintf(tm_cmd, "%s ON", BM_BALANCE);
+      sprintf(tm_cmd, "%s ON\n", BM_BALANCE);
       Serial.print("Command to send = ");
       Serial.println(tm_cmd);
       sendCMD(tm_cmd);
     }
     else if (strcmp(argv[1], "off") == 0)
     {
-      sprintf(tm_cmd, "%s OFF", BM_BALANCE);
+      sprintf(tm_cmd, "%s OFF\n", BM_BALANCE);
       Serial.print("Command to send = ");
       Serial.println(tm_cmd);
       sendCMD(tm_cmd);
     }
     else if (strcmp(argv[1], "auto") == 0)
     {
-      sprintf(tm_cmd, "%s AUTO", BM_BALANCE);
+      sprintf(tm_cmd, "%s AUTO\n", BM_BALANCE);
       Serial.print("Command to send = ");
       Serial.println(tm_cmd);
       sendCMD(tm_cmd);
@@ -378,7 +385,7 @@ int cmd_debug(int argc, char *argv[])
       case 'd':
         if ( (strcmp(argv[2], "0x0001") == 0) || (strcmp(argv[2], "0x0002") == 0) || (strcmp(argv[2], "0x0004") == 0) || (strcmp(argv[2], "0x0008") == 0) || (strcmp(argv[2], "0x0010") == 0) )
         {
-          sprintf(tm_cmd, "%s DISable, %s", BM_DEUBG, argv[2]);
+          sprintf(tm_cmd, "%s DISable, %s\n", BM_DEUBG, argv[2]);
           Serial.print("Command to send = ");
           Serial.println(tm_cmd);
           sendCMD(tm_cmd);
@@ -396,7 +403,7 @@ int cmd_debug(int argc, char *argv[])
       case 'n':
         if ( (strcmp(argv[2], "0x0001") == 0) || (strcmp(argv[2], "0x0002") == 0) || (strcmp(argv[2], "0x0004") == 0) || (strcmp(argv[2], "0x0008") == 0) || (strcmp(argv[2], "0x0010") == 0) )
         {
-          sprintf(tm_cmd, "%s ENable, %s", BM_DEUBG, argv[2]);
+          sprintf(tm_cmd, "%s ENable, %s\n", BM_DEUBG, argv[2]);
           Serial.print("Command to send = ");
           Serial.println(tm_cmd);
           sendCMD(tm_cmd);
@@ -431,14 +438,14 @@ int cmd_pf(int argc, char *argv[])
   {
     if (strcmp(argv[1], "on") == 0)
     {
-      sprintf(tm_cmd, "%s ON", BM_PFIN);
+      sprintf(tm_cmd, "%s ON\n", BM_PFIN);
       Serial.print("Command to send = ");
       Serial.println(tm_cmd);
       sendCMD(tm_cmd);
     }
     else if (strcmp(argv[1], "off") == 0)
     {
-      sprintf(tm_cmd, "%s OFF", BM_PFIN);
+      sprintf(tm_cmd, "%s OFF\n", BM_PFIN);
       Serial.print("Command to send = ");
       Serial.println(tm_cmd);
       sendCMD(tm_cmd);
@@ -462,7 +469,7 @@ int cmd_reset(int argc, char *argv[])
   }
   else
   {
-    sprintf(tm_cmd, "%s BQ", BM_RESET);
+    sprintf(tm_cmd, "%s BQ\n", BM_RESET);
     Serial.print("Command to send = ");
     Serial.println(tm_cmd);
     sendCMD(tm_cmd);
@@ -907,6 +914,26 @@ void print_data()
     sendCMD(tm_cmd);
     delay(I2C_RW_DELAY);
     readTM(115);
+    Serial.print(",");
+    sprintf(tm_cmd, "BM:TEL? 13,ASCII\n");
+    sendCMD(tm_cmd);
+    delay(I2C_RW_DELAY);
+    readTM(13);
+    Serial.print(",");
+    sprintf(tm_cmd, "BM:TEL? 14,ASCII\n");
+    sendCMD(tm_cmd);
+    delay(I2C_RW_DELAY);
+    readTM(14);
+    Serial.print(",");
+    sprintf(tm_cmd, "BM:TEL? 15,ASCII\n");
+    sendCMD(tm_cmd);
+    delay(I2C_RW_DELAY);
+    readTM(15);
+    Serial.print(",");
+    sprintf(tm_cmd, "BM:TEL? 17,ASCII\n");
+    sendCMD(tm_cmd);
+    delay(I2C_RW_DELAY);
+    readTM(17);
 
 
 

@@ -45,19 +45,19 @@ void loop()
 
     //ex: BM:TEL? 9,DATA
     snprintf(buf, sizeof(buf), "%.*s", current_len - 14, &receiveTC[8]);
-    sprintf(debug_print, "\nbuf =  %s", buf);
+    sprintf(debug_print, "\nbuf content =  %s", buf);
     Serial.println(debug_print);
     tc = atoi(buf);
     sprintf(debug_print, "TC =  %d", tc);
     Serial.println(debug_print);
     //  tempo_delay += millis();
 
-//    for (int i = 0 ; i < 10 ; i++)
-//    {
-//      sprintf(debug_print, "0x%.2X ", respTM[i]);
-//      Serial.print(debug_print);
-//    }
-//    Serial.println();
+    //    for (int i = 0 ; i < 10 ; i++)
+    //    {
+    //      sprintf(debug_print, "0x%.2X ", respTM[i]);
+    //      Serial.print(debug_print);
+    //    }
+    //    Serial.println();
     tempo = (millis() / 1000);
     flagRX = false;
   }
@@ -75,13 +75,13 @@ void receiveEvent(int howMany)
   while (Wire.available()) // loop through all but the last
   {
     receiveTC[k] = Wire.read();
-    
+
 
     //    uint8_t c = Wire.read(); // receive byte as a character
     //
-//            Serial.print("0x");
-//            Serial.print(receiveTC[k], HEX);        // print the HEX
-//            Serial.print(" ");
+    //            Serial.print("0x");
+    //            Serial.print(receiveTC[k], HEX);        // print the HEX
+    //            Serial.print(" ");
 
 
     //    Serial.write(c);        // print the character
@@ -95,7 +95,7 @@ void receiveEvent(int howMany)
 }
 
 uint8_t tm8[20] = {0X1 , 0X6D , 0X24 , 0X0 , 0X0 , 0X8E , 0XB , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0};
-uint8_t tm9[20] = {0x0 , 0xB2 , 0x78 , 0x0 , 0x0 , 0xA7 , 0x1B , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0};
+uint8_t tm9[20] = {0x01 , 0xB2 , 0x78 , 0x0 , 0x0 , 0xA7 , 0x1B , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0};
 uint8_t tm10[20] = {0X1 , 0X46 , 0X6F , 0X0 , 0X0 , 0XCE , 0XFF , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0};
 uint8_t tm11[20] = {0X1 , 0XFF , 0X7F , 0X0 , 0X0 , 0XCD , 0XFF , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0};
 uint8_t tm13[19] = {0X1 , 0X71 , 0X87 , 0X0 , 0X0 , 0X16 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0};
@@ -125,15 +125,15 @@ uint8_t tm73[20] = {0X1 , 0X89 , 0X6A , 0X2 , 0X0 , 0X91 , 0XB , 0X0 , 0X0 , 0X0
 uint8_t tm74[20] = {0X1 , 0X6B , 0X70 , 0X2 , 0X0 , 0X94 , 0XB , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0};
 uint8_t tm77[19] = {0X1 , 0X68 , 0X75 , 0X2 , 0X0 , 0X2 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0};
 uint8_t tm90[20] = {0X1 , 0X20 , 0XA6 , 0X2 , 0X0 , 0X10 , 0X8 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0};
-uint8_t tm93[20] = {0XA9 , 0XAC , 0X2 , 0X0 , 0XA9 , 0X1B , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0};
+uint8_t tm93[20] = {0x01, 0XA9 , 0XAC , 0X2 , 0X0 , 0XA9 , 0X1B , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0};
 uint8_t tm115[20] = {0X1 , 0XCA , 0XBA , 0X2 , 0X0 , 0XA , 0XB , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0 , 0X0};
 
 
 void requestEvent()
 {
   Serial.println("Sending Request");
-//  sprintf(debug_print, "TC =  %d", tc);
-//  Serial.println(debug_print);
+  //  sprintf(debug_print, "TC =  %d", tc);
+  //  Serial.println(debug_print);
 
   //Wire.write('x');
   switch (tc)

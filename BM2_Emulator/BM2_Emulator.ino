@@ -5,7 +5,7 @@ int i = 0;
 //#define ADDR 0x2B //TX
 #define ADDR 0x5C //BM2 
 String inputString = "";         // a String to hold incoming data
-bool flag_rx = false;  // whether the string is complete
+bool flag_rx = false;            // whether the string is complete
 uint8_t inChar;
 char debug_print[50];
 int k = 0;
@@ -21,10 +21,10 @@ char buf[4];
 void setup()
 {
 
-  Wire.begin(ADDR);                // join i2c bus with address #4
-  Wire.onReceive(receiveEvent); // register event
+  Wire.begin(ADDR);                     // join i2c bus with address #4
+  Wire.onReceive(receiveEvent);        // register event
   Wire.onRequest(requestEvent);
-  Serial.begin(115200);           // start serial for output
+  Serial.begin(115200);               // start serial for output
   //Serial1.begin(115200);
   Serial.println("boot: I2C sub slave");
   tempo = (millis() / 1000);
@@ -34,8 +34,10 @@ void loop()
 {
   //if (millis() >= tempo_delay + 5000)
   if (flagRX)
-  {
-    /*respTM[1] = (tempo >> 24) & 0xFF;
+  {    
+    /*
+     * //Code to implement a Timestamp
+     * respTM[1] = (tempo >> 24) & 0xFF;
       respTM[2] = (tempo >> 16) & 0xFF;
       respTM[3] = (tempo >> 8) & 0xFF;
       respTM[4] = (tempo) & 0xFF;
@@ -132,10 +134,7 @@ uint8_t tm115[20] = {0X1 , 0XCA , 0XBA , 0X2 , 0X0 , 0XA , 0XB , 0X0 , 0X0 , 0X0
 void requestEvent()
 {
   Serial.println("Sending Request");
-  //  sprintf(debug_print, "TC =  %d", tc);
-  //  Serial.println(debug_print);
 
-  //Wire.write('x');
   switch (tc)
   {
     case 8:
